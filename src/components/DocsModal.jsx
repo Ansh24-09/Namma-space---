@@ -11,7 +11,7 @@ export default function DocsModal({ isOpen, onClose }) {
         className="w-full max-w-4xl h-[85vh] glass-panel rounded-3xl overflow-hidden shadow-2xl border border-sky-500/30 flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
+        
         <div className="px-6 py-4 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-md shadow-sky-500/30">
@@ -34,7 +34,6 @@ export default function DocsModal({ isOpen, onClose }) {
           </button>
         </div>
 
-        {/* Tabs Bar */}
         <div className="flex items-center space-x-2 px-6 py-2.5 bg-slate-950/60 border-b border-slate-800 text-xs font-semibold">
           {[
             { id: 'abstract', label: '1. Executive Abstract & Scope' },
@@ -57,7 +56,6 @@ export default function DocsModal({ isOpen, onClose }) {
           ))}
         </div>
 
-        {/* Tab Content */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6 text-slate-300 text-sm leading-relaxed">
           {activeTab === 'abstract' && (
             <div className="space-y-4">
@@ -156,7 +154,6 @@ export default function DocsModal({ isOpen, onClose }) {
           )}
         </div>
 
-        {/* Footer */}
         <div className="px-6 py-3 bg-slate-900/90 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
           <span>Engine: Three.js • A* Pathfinding • WebXR AR</span>
           <button

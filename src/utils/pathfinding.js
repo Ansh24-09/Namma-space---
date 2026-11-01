@@ -1,20 +1,16 @@
-/**
- * Namma Space — Obstacle-Aware A* Pathfinding Engine
- * Computes optimal, non-colliding walking trajectories around walls, columns & furniture.
- */
+
 
 import { FLOOR_CONFIG, WALLS, OBSTACLES } from './floorData.js';
 
-const CELL_SIZE = FLOOR_CONFIG.gridCellSize; // 0.5m
-const MIN_X = -FLOOR_CONFIG.width / 2;       // -30m
-const MAX_X = FLOOR_CONFIG.width / 2;        // +30m
-const MIN_Z = -FLOOR_CONFIG.depth / 2;       // -20m
-const MAX_Z = FLOOR_CONFIG.depth / 2;        // +20m
+const CELL_SIZE = FLOOR_CONFIG.gridCellSize; 
+const MIN_X = -FLOOR_CONFIG.width / 2;       
+const MAX_X = FLOOR_CONFIG.width / 2;        
+const MIN_Z = -FLOOR_CONFIG.depth / 2;       
+const MAX_Z = FLOOR_CONFIG.depth / 2;        
 
-const COLS = Math.round((MAX_X - MIN_X) / CELL_SIZE); // 120 columns
-const ROWS = Math.round((MAX_Z - MIN_Z) / CELL_SIZE); // 80 rows
+const COLS = Math.round((MAX_X - MIN_X) / CELL_SIZE); 
+const ROWS = Math.round((MAX_Z - MIN_Z) / CELL_SIZE); 
 
-// World (x, z) to Grid (col, row)
 export function worldToGrid(x, z) {
   const col = Math.round((x - MIN_X) / CELL_SIZE);
   const row = Math.round((z - MIN_Z) / CELL_SIZE);
@@ -24,7 +20,6 @@ export function worldToGrid(x, z) {
   };
 }
 
-// Grid (col, row) to World (x, z)
 export function gridToWorld(col, row) {
   return {
     x: MIN_X + col * CELL_SIZE,
@@ -32,14 +27,9 @@ export function gridToWorld(col, row) {
   };
 }
 
-/**
- * Builds the static collision & walkable grid map.
- * 0 = Walkable, 1 = Solid Obstacle / Wall
- */
 function createNavigationGrid() {
   const grid = new Uint8Array(COLS * ROWS);
 
-  // Helper to mark a world bounding box as blocked with safety padding
   function blockBox(minX, maxX, minZ, maxZ, padding = 0.45) {
     const pMinX = Math.max(MIN_X, minX - padding);
     const pMaxX = Math.min(MAX_X, maxX + padding);
@@ -51,32 +41,29 @@ function createNavigationGrid() {
 
     for (let c = start.col; c <= end.col; c++) {
       for (let r = start.row; r <= end.row; r++) {
-        grid[r * COLS + c] = 1; // Blocked
+        grid[r * COLS + c] = 1; 
       }
     }
   }
 
-  // 1. Mark Walls as blocked
   WALLS.forEach(w => {
-    // Thinner padding for interior walls with doors to avoid clogging doorways
+    
     const pad = w.type === 'interior' ? 0.35 : 0.45;
     blockBox(w.minX, w.maxX, w.minZ, w.maxZ, pad);
   });
 
-  // 2. Mark Furniture & Obstacles as blocked
   OBSTACLES.forEach(o => {
     blockBox(o.minX, o.maxX, o.minZ, o.maxZ, 0.4);
   });
 
-  // 3. Guarantee explicit doorways are unblocked
   const DOORWAYS = [
-    { x: -12.8, z: -3.0, radius: 1.2 }, // Hall Alpha entrance
-    { x: -12.8, z: 9.0, radius: 1.2 },  // Boardroom Bravo entrance
-    { x: 12.8, z: -3.0, radius: 1.2 },  // Innovation Lab entrance
-    { x: 12.8, z: 9.0, radius: 1.2 },   // Co-working entrance
-    { x: -3.5, z: 6.0, radius: 1.0 },   // Server room doorway
-    { x: 0.0, z: -10.0, radius: 2.0 },  // Central Atrium to Corridors
-    { x: 0.0, z: 9.0, radius: 2.0 },    // Corridor to Cafeteria
+    { x: -12.8, z: -3.0, radius: 1.2 }, 
+    { x: -12.8, z: 9.0, radius: 1.2 },  
+    { x: 12.8, z: -3.0, radius: 1.2 },  
+    { x: 12.8, z: 9.0, radius: 1.2 },   
+    { x: -3.5, z: 6.0, radius: 1.0 },   
+    { x: 0.0, z: -10.0, radius: 2.0 },  
+    { x: 0.0, z: 9.0, radius: 2.0 },    
   ];
 
   DOORWAYS.forEach(d => {
@@ -84,10 +71,10 @@ function createNavigationGrid() {
     const end = worldToGrid(d.x + d.radius, d.z + d.radius);
     for (let c = start.col; c <= end.col; c++) {
       for (let r = start.row; r <= end.row; r++) {
-        // Only clear if not inside exterior boundary
+        
         const world = gridToWorld(c, r);
         if (Math.abs(world.x) < 29.2 && Math.abs(world.z) < 19.2) {
-          grid[r * COLS + c] = 0; // Walkable
+          grid[r * COLS + c] = 0; 
         }
       }
     }
@@ -96,7 +83,6 @@ function createNavigationGrid() {
   return grid;
 }
 
-// Precomputed static navigation map
 export const NAV_GRID = createNavigationGrid();
 
 export function isWalkable(col, row) {
@@ -115,7 +101,6 @@ export function isWorldPositionWalkable(x, z, radius = 0.3) {
   return true;
 }
 
-// Find nearest walkable cell if a point falls inside an obstacle
 function findNearestWalkable(col, row) {
   if (isWalkable(col, row)) return { col, row };
 
@@ -136,7 +121,6 @@ function findNearestWalkable(col, row) {
   return { col, row };
 }
 
-// Priority Queue for A*
 class PriorityQueue {
   constructor() {
     this.items = [];
@@ -161,10 +145,6 @@ class PriorityQueue {
   }
 }
 
-/**
- * Executes A* Search on the navigation grid.
- * Returns array of world coordinates [{x, y, z}, ...] forming the optimal walkable path.
- */
 export function findPath(startX, startZ, targetX, targetZ) {
   const startRaw = worldToGrid(startX, startZ);
   const targetRaw = worldToGrid(targetX, targetZ);
@@ -189,7 +169,6 @@ export function findPath(startX, startZ, targetX, targetZ) {
   fScore.set(startKey, initialH);
   openSet.enqueue(start, initialH);
 
-  // 8-directional neighbor deltas: [dCol, dRow, cost]
   const NEIGHBORS = [
     [1, 0, 1], [-1, 0, 1], [0, 1, 1], [0, -1, 1],
     [1, 1, Math.SQRT2], [1, -1, Math.SQRT2],
@@ -215,7 +194,6 @@ export function findPath(startX, startZ, targetX, targetZ) {
 
       if (!isWalkable(neighborCol, neighborRow)) continue;
 
-      // Prevent corner cutting if both adjacent orthogonal cells are blocked
       if (dc !== 0 && dr !== 0) {
         if (!isWalkable(current.col + dc, current.row) || !isWalkable(current.col, current.row + dr)) {
           continue;
@@ -237,14 +215,13 @@ export function findPath(startX, startZ, targetX, targetZ) {
   }
 
   if (!found) {
-    // If no complete path found, return straight direct fallback
+    
     return [
       { x: startX, y: 0.05, z: startZ },
       { x: targetX, y: 0.05, z: targetZ }
     ];
   }
 
-  // Reconstruct path
   const rawPath = [];
   let curr = target;
   while (curr) {
@@ -255,19 +232,14 @@ export function findPath(startX, startZ, targetX, targetZ) {
   }
   rawPath.reverse();
 
-  // Smooth the raw grid path by eliminating redundant colinear waypoints
   const smoothedPath = smoothPath(rawPath);
 
-  // Add exact start and target coordinates
   smoothedPath[0] = { x: startX, y: 0.05, z: startZ };
   smoothedPath[smoothedPath.length - 1] = { x: targetX, y: 0.05, z: targetZ };
 
   return smoothedPath;
 }
 
-/**
- * Line of sight check between two points using Bresenham algorithm on nav grid
- */
 function hasLineOfSight(p1, p2) {
   const g1 = worldToGrid(p1.x, p1.z);
   const g2 = worldToGrid(p2.x, p2.z);
@@ -297,9 +269,6 @@ function hasLineOfSight(p1, p2) {
   return true;
 }
 
-/**
- * Path Smoothing: removes intermediate waypoints when line of sight is clear
- */
 function smoothPath(path) {
   if (path.length <= 2) return path;
 
@@ -308,7 +277,7 @@ function smoothPath(path) {
 
   while (currentIdx < path.length - 1) {
     let furthestIdx = currentIdx + 1;
-    // Look ahead as far as possible
+    
     for (let testIdx = path.length - 1; testIdx > currentIdx; testIdx--) {
       if (hasLineOfSight(path[currentIdx], path[testIdx])) {
         furthestIdx = testIdx;
@@ -322,9 +291,6 @@ function smoothPath(path) {
   return smoothed;
 }
 
-/**
- * Calculates total walking distance along a path in meters
- */
 export function calculatePathDistance(path) {
   if (!path || path.length < 2) return 0;
   let dist = 0;
@@ -336,14 +302,11 @@ export function calculatePathDistance(path) {
   return dist;
 }
 
-/**
- * Generates turn-by-turn navigation instructions from a smoothed path
- */
 export function generateTurnByTurnDirections(path, destinationName) {
   if (!path || path.length < 2) return [];
 
   const directions = [];
-  const walkingSpeed = 1.3; // meters / second
+  const walkingSpeed = 1.3; 
 
   for (let i = 0; i < path.length - 1; i++) {
     const p1 = path[i];
@@ -352,7 +315,7 @@ export function generateTurnByTurnDirections(path, destinationName) {
 
     if (segmentDist < 0.2 && i < path.length - 2) continue;
 
-    const angle = Math.atan2(p2.x - p1.x, p2.z - p1.z); // Radians
+    const angle = Math.atan2(p2.x - p1.x, p2.z - p1.z); 
 
     let instruction = '';
     let icon = 'straight';
@@ -397,7 +360,6 @@ export function generateTurnByTurnDirections(path, destinationName) {
     });
   }
 
-  // Arrival note
   directions.push({
     step: directions.length + 1,
     instruction: `Arrived at ${destinationName}`,

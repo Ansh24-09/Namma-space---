@@ -24,13 +24,11 @@ export default function WalkthroughViewer({
   const controlsRef = useRef(null);
   const animFrameIdRef = useRef(null);
 
-  // Movement state
   const keysPressed = useRef({ w: false, a: false, s: false, d: false, shift: false });
   const velocity = useRef(new THREE.Vector3());
   const direction = useRef(new THREE.Vector3());
   const headBobTimer = useRef(0);
 
-  // References for dynamic 3D elements
   const pathMeshRef = useRef(null);
   const pathParticlesRef = useRef([]);
   const destinationBeaconRef = useRef(null);
@@ -38,20 +36,16 @@ export default function WalkthroughViewer({
   const raycasterRef = useRef(new THREE.Raycaster());
   const mouseRef = useRef(new THREE.Vector2());
 
-  // Interactive hover state
   const [hoveredPOI, setHoveredPOI] = useState(null);
 
-  // Setup Three.js Scene
   useEffect(() => {
     if (!mountRef.current) return;
 
-    // 1. Scene
     const scene = new THREE.Scene();
     scene.background = new THREE.Color('#090d16');
     scene.fog = new THREE.FogExp2('#090d16', 0.015);
     sceneRef.current = scene;
 
-    // 2. Dimensions & Camera
     const getViewportSize = () => {
       const w = mountRef.current?.clientWidth || window.innerWidth || 1280;
       const h = mountRef.current?.clientHeight || window.innerHeight || 800;
@@ -70,7 +64,6 @@ export default function WalkthroughViewer({
     camera.rotation.set(DEFAULT_SPAWN.rotation[0], DEFAULT_SPAWN.rotation[1], DEFAULT_SPAWN.rotation[2]);
     cameraRef.current = camera;
 
-    // 3. Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -81,21 +74,18 @@ export default function WalkthroughViewer({
     mountRef.current.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
-    // 4. PointerLock Controls
     const controls = new PointerLockControls(camera, renderer.domElement);
     controlsRef.current = controls;
 
     controls.addEventListener('lock', () => setFreeLookLocked(true));
     controls.addEventListener('unlock', () => setFreeLookLocked(false));
 
-    // 5. Lighting Setup (Photorealistic Corporate Architecture)
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.55);
     scene.add(ambientLight);
 
     const hemiLight = new THREE.HemisphereLight(0xddeeff, 0x111122, 0.4);
     scene.add(hemiLight);
 
-    // Main ceiling recessed spotlights for key zones
     ROOM_ZONES.forEach(zone => {
       const centerX = (zone.bounds.minX + zone.bounds.maxX) / 2;
       const centerZ = (zone.bounds.minZ + zone.bounds.maxZ) / 2;
@@ -108,7 +98,6 @@ export default function WalkthroughViewer({
       zoneLight.shadow.bias = -0.002;
       scene.add(zoneLight);
 
-      // Emissive ceiling panel geometry
       const panelGeo = new THREE.PlaneGeometry(3, 3);
       const panelMat = new THREE.MeshBasicMaterial({
         color: 0xffffff,
@@ -120,13 +109,11 @@ export default function WalkthroughViewer({
       scene.add(panelMesh);
     });
 
-    // 6. Build Architectural Structure
     buildFloorAndCeiling(scene);
     buildWalls(scene);
     buildFurnitureAndObstacles(scene);
     buildPOIMarkers(scene, poiMeshesRef);
 
-    // 7. Key Event Listeners
     const onKeyDown = (e) => {
       switch (e.code) {
         case 'KeyW':
@@ -194,7 +181,6 @@ export default function WalkthroughViewer({
     window.addEventListener('keydown', onKeyDown);
     window.addEventListener('keyup', onKeyUp);
 
-    // 8. Window Resize Handler
     const handleResize = () => {
       if (!mountRef.current || !rendererRef.current || !cameraRef.current) return;
       const { width: w, height: h } = getViewportSize();
@@ -206,10 +192,9 @@ export default function WalkthroughViewer({
     };
     window.addEventListener('resize', handleResize);
 
-    // 9. Pointer Raycast for Clicking POIs in 3D
     const handleCanvasClick = (event) => {
       if (!controls.isLocked) {
-        // If not locked, user clicks to lock controls or click on a POI
+        
         const rect = renderer.domElement.getBoundingClientRect();
         mouseRef.current.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
         mouseRef.current.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
@@ -231,7 +216,6 @@ export default function WalkthroughViewer({
     const domElement = renderer.domElement;
     domElement.addEventListener('click', handleCanvasClick);
 
-    // 10. Main Animation Loop
     let lastTime = performance.now();
 
     const animate = (time) => {
@@ -240,22 +224,17 @@ export default function WalkthroughViewer({
       const delta = Math.min((time - lastTime) / 1000, 0.1);
       lastTime = time;
 
-      // Update Player Movement & Collision
       updatePlayer(delta, camera, controls);
 
-      // Animate 3D POI Floating Badges
       animatePOIs(time);
 
-      // Animate Active Navigation Path
       animatePath(time);
 
-      // Render
       renderer.render(scene, camera);
     };
 
     animFrameIdRef.current = requestAnimationFrame(animate);
 
-    // Cleanup
     return () => {
       if (animFrameIdRef.current) cancelAnimationFrame(animFrameIdRef.current);
       window.removeEventListener('keydown', onKeyDown);
@@ -270,9 +249,8 @@ export default function WalkthroughViewer({
     };
   }, []);
 
-  // Player physics, WASD, headbob, and collision sliding
   const updatePlayer = (delta, camera, controls) => {
-    // Friction damping
+    
     velocity.current.x -= velocity.current.x * 10.0 * delta;
     velocity.current.z -= velocity.current.z * 10.0 * delta;
 
@@ -280,7 +258,7 @@ export default function WalkthroughViewer({
     direction.current.x = Number(keysPressed.current.d) - Number(keysPressed.current.a);
     direction.current.normalize();
 
-    const moveSpeed = keysPressed.current.shift ? 6.5 : 3.2; // Sprint vs Walk speed
+    const moveSpeed = keysPressed.current.shift ? 6.5 : 3.2; 
 
     if (keysPressed.current.w || keysPressed.current.s) {
       velocity.current.z -= direction.current.z * moveSpeed * 50.0 * delta;
@@ -289,7 +267,6 @@ export default function WalkthroughViewer({
       velocity.current.x -= direction.current.x * moveSpeed * 50.0 * delta;
     }
 
-    // Calculate intended movement in world space
     const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
     forward.y = 0;
     forward.normalize();
@@ -304,23 +281,20 @@ export default function WalkthroughViewer({
     const currentX = camera.position.x;
     const currentZ = camera.position.z;
 
-    // Obstacle & Wall Collision Check with sliding
     const newX = currentX + moveDeltaX;
     const newZ = currentZ + moveDeltaZ;
 
-    // Test full step
     if (isWorldPositionWalkable(newX, newZ, 0.35)) {
       camera.position.x = newX;
       camera.position.z = newZ;
     } else if (isWorldPositionWalkable(newX, currentZ, 0.35)) {
-      // Slide along X
+      
       camera.position.x = newX;
     } else if (isWorldPositionWalkable(currentX, newZ, 0.35)) {
-      // Slide along Z
+      
       camera.position.z = newZ;
     }
 
-    // Head Bobbing calculation
     const isMoving = (keysPressed.current.w || keysPressed.current.s || keysPressed.current.a || keysPressed.current.d) && controls.isLocked;
     if (isMoving) {
       headBobTimer.current += delta * (keysPressed.current.shift ? 14 : 9);
@@ -329,28 +303,24 @@ export default function WalkthroughViewer({
       camera.position.y = 1.6;
     }
 
-    // Sync player position & heading for Minimap and HUD
     setPlayerPos([camera.position.x, camera.position.y, camera.position.z]);
 
     const camEuler = new THREE.Euler().setFromQuaternion(camera.quaternion, 'YXZ');
     setPlayerHeading(camEuler.y);
   };
 
-  // Animate floating POI tags & holographic rings
   const animatePOIs = (time) => {
     const t = time * 0.002;
     poiMeshesRef.current.forEach(poiGroup => {
-      // Floating oscillation
+      
       poiGroup.position.y = poiGroup.userData.baseY + Math.sin(t + poiGroup.userData.phase) * 0.12;
 
-      // Rotate decorative beacon ring
       const ring = poiGroup.userData.ring;
       if (ring) {
         ring.rotation.z += 0.02;
       }
     });
 
-    // Animate Techfest Central Hologram
     if (sceneRef.current) {
       const centralHolo = sceneRef.current.getObjectByName('techfest-hologram-mesh');
       if (centralHolo) {
@@ -360,15 +330,13 @@ export default function WalkthroughViewer({
     }
   };
 
-  // Animate glowing navigation path
   const animatePath = (time) => {
     if (pathMeshRef.current && pathMeshRef.current.material) {
-      // Pulse brightness
+      
       const pulse = 0.8 + Math.sin(time * 0.005) * 0.2;
       pathMeshRef.current.material.opacity = pulse;
     }
 
-    // Move glowing light orbs along waypoints
     if (pathParticlesRef.current.length > 0) {
       const t = (time * 0.001) % 1.0;
       pathParticlesRef.current.forEach((particle, idx) => {
@@ -380,18 +348,15 @@ export default function WalkthroughViewer({
       });
     }
 
-    // Destination beacon rotation
     if (destinationBeaconRef.current) {
       destinationBeaconRef.current.rotation.y += 0.03;
     }
   };
 
-  // Update 3D Path whenever activePath changes
   useEffect(() => {
     if (!sceneRef.current) return;
     const scene = sceneRef.current;
 
-    // Remove old path meshes
     if (pathMeshRef.current) {
       scene.remove(pathMeshRef.current);
       pathMeshRef.current.geometry.dispose();
@@ -399,7 +364,6 @@ export default function WalkthroughViewer({
       pathMeshRef.current = null;
     }
 
-    // Remove old moving particles
     pathParticlesRef.current.forEach(p => {
       scene.remove(p);
       p.geometry.dispose();
@@ -407,7 +371,6 @@ export default function WalkthroughViewer({
     });
     pathParticlesRef.current = [];
 
-    // Remove old destination beacon
     if (destinationBeaconRef.current) {
       scene.remove(destinationBeaconRef.current);
       destinationBeaconRef.current = null;
@@ -415,11 +378,9 @@ export default function WalkthroughViewer({
 
     if (!activePath || activePath.length < 2) return;
 
-    // Build smooth 3D CatmullRom spline path
     const points = activePath.map(p => new THREE.Vector3(p.x, 0.08, p.z));
     const curve = new THREE.CatmullRomCurve3(points, false, 'centripetal', 0.2);
 
-    // Ribbon geometry along path
     const tubeGeo = new THREE.TubeGeometry(curve, 100, 0.18, 8, false);
     const tubeMat = new THREE.MeshStandardMaterial({
       color: 0x38bdf8,
@@ -435,7 +396,6 @@ export default function WalkthroughViewer({
     scene.add(pathMesh);
     pathMeshRef.current = pathMesh;
 
-    // Animated glowing light beads travelling along the path
     const beadCount = 6;
     for (let i = 0; i < beadCount; i++) {
       const beadGeo = new THREE.SphereGeometry(0.24, 16, 16);
@@ -450,12 +410,10 @@ export default function WalkthroughViewer({
       pathParticlesRef.current.push(bead);
     }
 
-    // Destination beacon at target
     const targetPt = points[points.length - 1];
     const beaconGroup = new THREE.Group();
     beaconGroup.position.set(targetPt.x, 0, targetPt.z);
 
-    // Vertical holographic light pillar
     const cylinderGeo = new THREE.CylinderGeometry(0.6, 0.6, 4.0, 32, 1, true);
     const cylinderMat = new THREE.MeshBasicMaterial({
       color: 0x38bdf8,
@@ -467,7 +425,6 @@ export default function WalkthroughViewer({
     cylinder.position.y = 2.0;
     beaconGroup.add(cylinder);
 
-    // Glowing target concentric rings on floor
     const ringGeo = new THREE.RingGeometry(0.3, 1.2, 32);
     const ringMat = new THREE.MeshBasicMaterial({
       color: 0x38bdf8,
@@ -482,7 +439,6 @@ export default function WalkthroughViewer({
     destinationBeaconRef.current = beaconGroup;
   }, [activePath]);
 
-  // Teleport player directly to selected POI when requested
   useEffect(() => {
     if (!selectedPOI || !cameraRef.current) return;
     const target = selectedPOI.walkableTarget;
@@ -494,13 +450,11 @@ export default function WalkthroughViewer({
 
   return (
     <div className="relative w-full h-full overflow-hidden select-none">
-      {/* 3D Canvas Mount Point */}
+      
       <div ref={mountRef} className="w-full h-full cursor-crosshair" />
 
-      {/* Crosshair HUD */}
       <div className={`crosshair ${hoveredPOI ? 'interactive' : ''}`} />
 
-      {/* Free Roam / Desktop Walkthrough Click-to-lock instruction banner */}
       {!freeLookLocked && (
         <div
           onClick={() => controlsRef.current?.lock()}
@@ -543,7 +497,6 @@ export default function WalkthroughViewer({
         </div>
       )}
 
-      {/* Control Tips Badge in bottom left */}
       <div className="absolute bottom-6 left-6 pointer-events-none z-10 hidden sm:flex items-center space-x-2 glass-panel-subtle px-3 py-1.5 rounded-lg text-xs text-slate-400 border border-slate-800">
         <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping mr-1"></span>
         <span>WASD to Move</span>
@@ -558,14 +511,11 @@ export default function WalkthroughViewer({
   );
 }
 
-// ==================== PROCEDURAL 3D ARCHITECTURAL BUILDERS ====================
-
 function buildFloorAndCeiling(scene) {
   const width = FLOOR_CONFIG.width;
   const depth = FLOOR_CONFIG.depth;
   const height = FLOOR_CONFIG.height;
 
-  // Main Polished Architectural Floor
   const floorGeo = new THREE.PlaneGeometry(width, depth, 60, 40);
   const floorMat = new THREE.MeshStandardMaterial({
     color: 0x0f172a,
@@ -577,12 +527,10 @@ function buildFloorAndCeiling(scene) {
   floorMesh.receiveShadow = true;
   scene.add(floorMesh);
 
-  // Decorative High-Tech Grid lines on Floor
   const gridHelper = new THREE.GridHelper(width, 60, 0x0284c7, 0x1e293b);
   gridHelper.position.y = 0.01;
   scene.add(gridHelper);
 
-  // Ceiling
   const ceilingGeo = new THREE.PlaneGeometry(width, depth);
   const ceilingMat = new THREE.MeshStandardMaterial({
     color: 0x0b0f19,
@@ -594,7 +542,6 @@ function buildFloorAndCeiling(scene) {
   ceilingMesh.position.y = height;
   scene.add(ceilingMesh);
 
-  // Zone Floor Inlays (Distinguishes rooms with subtle tinted luxury tiles)
   ROOM_ZONES.forEach(zone => {
     const zw = zone.bounds.maxX - zone.bounds.minX;
     const zd = zone.bounds.maxZ - zone.bounds.minZ;
@@ -651,7 +598,7 @@ function buildWalls(scene) {
         metalness: 0.5
       });
     } else {
-      // Interior drywall with modern dark architectural tone
+      
       wallMat = new THREE.MeshStandardMaterial({
         color: 0x1e2230,
         roughness: 0.8,
@@ -665,7 +612,6 @@ function buildWalls(scene) {
     wallMesh.receiveShadow = true;
     scene.add(wallMesh);
 
-    // Decorative wall baseboard strip
     if (w.type !== 'glass' && w.type !== 'pillar') {
       const baseGeo = new THREE.BoxGeometry(width + 0.05, 0.12, depth + 0.05);
       const baseMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.8, roughness: 0.2 });
@@ -699,7 +645,6 @@ function buildFurnitureAndObstacles(scene) {
     scene.add(mesh);
   });
 
-  // Special Centerpiece: Techfest Floating Hologram Cube
   const holoGeo = new THREE.OctahedronGeometry(1.2, 0);
   const holoMat = new THREE.MeshPhysicalMaterial({
     color: 0x38bdf8,
@@ -713,7 +658,6 @@ function buildFurnitureAndObstacles(scene) {
   holoMesh.position.set(6.5, 2.6, 1.5);
   scene.add(holoMesh);
 
-  // Large Video Wall Screen in Keynote Lecture Hall
   const screenGeo = new THREE.PlaneGeometry(8, 3.2);
   const screenMat = new THREE.MeshBasicMaterial({
     color: 0x1e1b4b,
@@ -735,7 +679,6 @@ function buildPOIMarkers(scene, poiMeshesRef) {
       phase: index * 0.8
     };
 
-    // 1. Holographic Floating Diamond Pin
     const pinGeo = new THREE.ConeGeometry(0.35, 0.7, 5);
     const pinMat = new THREE.MeshStandardMaterial({
       color: new THREE.Color(poi.categoryColor),
@@ -745,11 +688,10 @@ function buildPOIMarkers(scene, poiMeshesRef) {
       metalness: 0.8
     });
     const pinMesh = new THREE.Mesh(pinGeo, pinMat);
-    pinMesh.rotation.x = Math.PI; // Point down towards target
+    pinMesh.rotation.x = Math.PI; 
     pinMesh.userData = { poiData: poi };
     poiGroup.add(pinMesh);
 
-    // 2. Rotating Decorative Celestial Ring
     const ringGeo = new THREE.TorusGeometry(0.55, 0.025, 8, 32);
     const ringMat = new THREE.MeshBasicMaterial({
       color: new THREE.Color(poi.categoryColor),
@@ -761,12 +703,10 @@ function buildPOIMarkers(scene, poiMeshesRef) {
     poiGroup.add(ringMesh);
     poiGroup.userData.ring = ringMesh;
 
-    // 3. Glowing Point light for local illumination
     const poiLight = new THREE.PointLight(poi.categoryColor, 0.8, 6);
     poiLight.position.set(0, 0, 0);
     poiGroup.add(poiLight);
 
-    // 4. Floating 2D Canvas Sprite Text Label
     const sprite = createTextSprite(poi.name, poi.categoryColor);
     sprite.position.set(0, 0.75, 0);
     sprite.userData = { poiData: poi };
@@ -783,7 +723,6 @@ function createTextSprite(text, colorHex) {
   canvas.height = 128;
   const ctx = canvas.getContext('2d');
 
-  // Background rounded pill
   ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
   ctx.strokeStyle = colorHex;
   ctx.lineWidth = 4;
@@ -791,7 +730,6 @@ function createTextSprite(text, colorHex) {
   ctx.fill();
   ctx.stroke();
 
-  // Text
   ctx.font = 'bold 36px "Plus Jakarta Sans", sans-serif';
   ctx.fillStyle = '#ffffff';
   ctx.textAlign = 'center';

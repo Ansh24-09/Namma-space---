@@ -1,11 +1,4 @@
-#!/usr/bin/env python3
-"""
-Namma Space — Automated 3D Reconstruction Pipeline
-Converts smartphone video/photos into photorealistic 3D models (3DGS / GLTF)
-for the web-viewer digital twin.
 
-Techfest 2026-27 | Namma Space Pipeline
-"""
 
 import os
 import sys
@@ -22,7 +15,7 @@ def print_banner(step_num, title):
     print("=" * 65)
 
 def check_dependencies():
-    """Verify system prerequisites."""
+    
     print("Checking dependencies...")
     tools = ['ffmpeg', 'python3']
     for tool in tools:
@@ -31,10 +24,7 @@ def check_dependencies():
         print(f"  • {tool:<15} {status}")
 
 def extract_keyframes(video_path, output_dir, fps=3):
-    """
-    Extracts evenly spaced sharp keyframes from smartphone video
-    according to the Namma Space Capture SOP (3-4 fps provides 80% overlap).
-    """
+    
     print_banner(1, f"Extracting Keyframes from Video: {video_path}")
     os.makedirs(output_dir, exist_ok=True)
 
@@ -56,15 +46,11 @@ def extract_keyframes(video_path, output_dir, fps=3):
         return 0
 
 def generate_camera_transforms(frames_dir, output_json):
-    """
-    Computes/Generates camera trajectory transforms (NeRF / 3D Gaussian Splatting format)
-    specifying focal length, camera intrinsics, and 4x4 extrinsic matrices.
-    """
+    
     print_banner(2, "Generating Camera Intrinsics & Extrinsics (transforms.json)")
     frames = sorted(list(Path(frames_dir).glob("*.jpg")))
-    
-    # Standard smartphone FOV (approx 68 degrees horizontal for 1x lens)
-    camera_angle_x = 1.1868  # ~68 degrees in radians
+
+    camera_angle_x = 1.1868  
     fl_x = 0.5 * 1920 / math.tan(camera_angle_x / 2)
     fl_y = fl_x
     
@@ -84,18 +70,15 @@ def generate_camera_transforms(frames_dir, output_json):
         "frames": []
     }
 
-    # Generate continuous walking trajectory
     num_frames = max(len(frames), 45)
     for i in range(num_frames):
         fname = frames[i].name if i < len(frames) else f"frame_{i:05d}.jpg"
-        
-        # Simulated camera motion along perimeter loop (SOP trajectory)
+
         t = (i / num_frames) * 2 * math.pi
         px = 12.0 * math.cos(t)
         pz = 8.0 * math.sin(t)
-        py = 1.6  # 1.6m eye level
-        
-        # Looking slightly forward/inward
+        py = 1.6  
+
         yaw = -t + math.pi / 2
         
         transform_matrix = [
@@ -116,21 +99,15 @@ def generate_camera_transforms(frames_dir, output_json):
     print(f"✓ Saved camera poses for {num_frames} frames to {output_json}")
 
 def build_sparse_point_cloud(output_ply):
-    """
-    Generates a structured 3D point cloud / splat representation (.ply)
-    compatible with Gaussian Splatting and WebGL point cloud viewers.
-    """
+    
     print_banner(3, f"Synthesizing 3D Sparse Spatial Geometry: {output_ply}")
-    
-    # Generate PLY header and sample indoor point cloud (walls, floor, ceiling, furniture)
+
     points = []
-    
-    # 1. Floor grid points
+
     for x in range(-30, 31, 2):
         for z in range(-20, 21, 2):
             points.append((x, 0.0, z, 30, 45, 65))
-            
-    # 2. Wall perimeter points
+
     for x in range(-30, 31, 1):
         for y in range(0, 5):
             points.append((x, y, -20.0, 40, 50, 70))
@@ -140,17 +117,18 @@ def build_sparse_point_cloud(output_ply):
             points.append((-30.0, y, z, 40, 50, 70))
             points.append((30.0, y, z, 40, 50, 70))
             
-    header = f"""ply
-format ascii 1.0
-element vertex {len(points)}
-property float x
-property float y
-property float z
-property uchar red
-property uchar green
-property uchar blue
-end_header
-"""
+    header = (
+        "ply\n"
+        "format ascii 1.0\n"
+        f"element vertex {len(points)}\n"
+        "property float x\n"
+        "property float y\n"
+        "property float z\n"
+        "property uchar red\n"
+        "property uchar green\n"
+        "property uchar blue\n"
+        "end_header\n"
+    )
     with open(output_ply, 'w') as f:
         f.write(header)
         for p in points:
@@ -159,9 +137,7 @@ end_header
     print(f"✓ Generated {len(points)} 3D spatial vertices in {output_ply}")
 
 def export_for_web(output_dir):
-    """
-    Copies web assets and verifies deployment readiness.
-    """
+    
     print_banner(4, "Exporting Web Assets & Verifying NavMesh Compatibility")
     print("✓ NavMesh 2D slice verified: 120x80 navigation grid synchronized.")
     print("✓ 10 POIs tagged with 3D coordinates, amenities, and category badges.")
@@ -184,19 +160,15 @@ def main():
     os.makedirs(images_dir, exist_ok=True)
 
     check_dependencies()
-    
-    # Step 1: Video to Keyframes
+
     extract_keyframes(args.video, images_dir, fps=args.fps)
-    
-    # Step 2: Camera Trajectory Pose Estimation
+
     transforms_file = Path(args.output) / "transforms.json"
     generate_camera_transforms(images_dir, transforms_file)
-    
-    # Step 3: Sparse 3D Reconstruction
+
     ply_file = Path(args.output) / "point_cloud.ply"
     build_sparse_point_cloud(ply_file)
-    
-    # Step 4: Export to Web Viewer
+
     export_for_web(args.output)
 
     print("\n" + "=" * 65)

@@ -1,8 +1,4 @@
-#!/usr/bin/env python3
-"""
-Namma Space — Automated COLMAP Structure-from-Motion Runner
-Automates feature extraction, matching, and sparse reconstruction from images.
-"""
+
 
 import os
 import sys
@@ -18,7 +14,6 @@ def run_colmap_pipeline(image_dir, workspace_dir, camera_model="SIMPLE_RADIAL", 
 
     print(f"Starting COLMAP SfM on images in: {image_dir}")
 
-    # 1. Feature Extraction
     cmd_feat = [
         "colmap", "feature_extractor",
         "--database_path", str(database_path),
@@ -33,7 +28,6 @@ def run_colmap_pipeline(image_dir, workspace_dir, camera_model="SIMPLE_RADIAL", 
         print("COLMAP binary not found on system path. Please ensure COLMAP is installed.")
         return False
 
-    # 2. Feature Matching (Sequential matcher is ideal for video captures per SOP)
     if matching_type == "sequential":
         cmd_match = [
             "colmap", "sequential_matcher",
@@ -50,7 +44,6 @@ def run_colmap_pipeline(image_dir, workspace_dir, camera_model="SIMPLE_RADIAL", 
     print(f"[2/3] Matching Features ({matching_type})...")
     subprocess.run(cmd_match, check=True)
 
-    # 3. Sparse Reconstruction (Mapper)
     cmd_map = [
         "colmap", "mapper",
         "--database_path", str(database_path),

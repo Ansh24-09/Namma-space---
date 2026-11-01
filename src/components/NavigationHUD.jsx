@@ -11,7 +11,6 @@ export default function NavigationHUD({
 
   if (!destination || !directions || directions.length === 0) return null;
 
-  // Estimate walking time (1.3 m/s human walk speed)
   const estimatedSeconds = Math.round(totalDistance / 1.3);
   const timeFormatted =
     estimatedSeconds > 60
@@ -64,7 +63,7 @@ export default function NavigationHUD({
   return (
     <div className="absolute top-20 left-6 z-30 max-w-sm w-full animate-in slide-in-from-top-4 duration-300">
       <div className="glass-panel rounded-2xl overflow-hidden border border-sky-500/30 shadow-2xl">
-        {/* Top Banner: Destination info */}
+        
         <div className="p-4 bg-gradient-to-r from-slate-900/90 to-slate-800/90 border-b border-slate-700/60 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div
@@ -93,7 +92,6 @@ export default function NavigationHUD({
           </button>
         </div>
 
-        {/* Current Turn Direction Callout */}
         <div className="p-4 bg-slate-950/60 flex items-center space-x-4">
           <div className="w-12 h-12 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center shrink-0 shadow-inner">
             {renderIcon(currentStep?.icon)}
@@ -108,7 +106,6 @@ export default function NavigationHUD({
           </div>
         </div>
 
-        {/* Route Stats Bar */}
         <div className="grid grid-cols-2 gap-2 p-3 bg-slate-900/60 border-t border-slate-800 text-xs">
           <div className="flex items-center space-x-2 text-slate-300">
             <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -130,7 +127,6 @@ export default function NavigationHUD({
           </div>
         </div>
 
-        {/* Full Itinerary Accordion Toggle */}
         <div className="px-4 py-2 bg-slate-950/80 border-t border-slate-800/80 flex items-center justify-between text-xs">
           <button
             onClick={() => setShowFullItinerary(!showFullItinerary)}
@@ -149,7 +145,6 @@ export default function NavigationHUD({
           <span className="text-[10px] text-slate-500 font-mono">A* Obstacle-Free</span>
         </div>
 
-        {/* Expanded Itinerary Steps */}
         {showFullItinerary && (
           <div className="max-h-56 overflow-y-auto p-3 space-y-2 bg-slate-950/90 border-t border-slate-800 text-xs animate-in fade-in">
             {directions.map((d, index) => (

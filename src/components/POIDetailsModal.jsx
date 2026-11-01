@@ -14,7 +14,7 @@ export default function POIDetailsModal({
         className="w-full max-w-lg glass-panel rounded-3xl overflow-hidden shadow-2xl border border-sky-500/30 flex flex-col animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header Image with Gradient Overlay */}
+        
         <div className="relative h-48 w-full bg-slate-800 overflow-hidden">
           <img
             src={poi.photoUrl}
@@ -26,7 +26,6 @@ export default function POIDetailsModal({
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
 
-          {/* Close button */}
           <button
             onClick={onClose}
             className="absolute top-4 right-4 p-2 rounded-full bg-slate-900/80 hover:bg-slate-800 text-white backdrop-blur-md border border-white/10 transition"
@@ -36,7 +35,6 @@ export default function POIDetailsModal({
             </svg>
           </button>
 
-          {/* Category Badge */}
           <div className="absolute bottom-4 left-5 flex items-center space-x-2">
             <span
               className="px-3 py-1 rounded-full text-xs font-bold text-white shadow-md uppercase tracking-wider"
@@ -50,14 +48,12 @@ export default function POIDetailsModal({
           </div>
         </div>
 
-        {/* Content Body */}
         <div className="p-6 space-y-4 bg-slate-950/70">
           <div>
             <h2 className="text-xl font-extrabold text-white tracking-tight">{poi.name}</h2>
             <p className="text-sm text-slate-300 mt-2 leading-relaxed">{poi.description}</p>
           </div>
 
-          {/* Amenities & Features */}
           {poi.amenities && poi.amenities.length > 0 && (
             <div>
               <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
@@ -79,7 +75,6 @@ export default function POIDetailsModal({
             </div>
           )}
 
-          {/* Operating Info */}
           <div className="grid grid-cols-2 gap-3 pt-2 text-xs text-slate-400 border-t border-slate-800/80">
             <div>
               <span className="block text-slate-500 font-mono text-[10px] uppercase">Access Hours</span>
@@ -93,7 +88,6 @@ export default function POIDetailsModal({
             </div>
           </div>
 
-          {/* Actions */}
           <div className="flex items-center space-x-3 pt-4 border-t border-slate-800">
             <button
               onClick={() => {

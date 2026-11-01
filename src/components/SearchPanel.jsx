@@ -14,7 +14,6 @@ export default function SearchPanel({
 
   const categories = ['All', 'Information & Check-in', 'Keynotes & Talks', 'Meeting & Conferences', 'R&D / Hardware', 'Workspace', 'Dining & Refreshments', 'Amenities', 'Emergency & Safety'];
 
-  // Calculate distance from player to each POI
   const poisWithDistance = useMemo(() => {
     return POI_LIST.map((poi) => {
       const dx = poi.position[0] - playerPos[0];
@@ -27,7 +26,6 @@ export default function SearchPanel({
     });
   }, [playerPos]);
 
-  // Filtered results
   const filteredPOIs = useMemo(() => {
     return poisWithDistance.filter((poi) => {
       const matchesCategory = selectedCategory === 'All' || poi.category === selectedCategory;
@@ -53,7 +51,7 @@ export default function SearchPanel({
         className="w-full max-w-2xl glass-panel rounded-2xl shadow-2xl border border-sky-500/30 overflow-hidden flex flex-col max-h-[80vh]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Search Input Bar */}
+        
         <div className="flex items-center px-4 py-3.5 border-b border-slate-800 bg-slate-900/90 space-x-3">
           <svg width="20" height="20" style={{ width: 20, height: 20 }} className="w-5 h-5 text-sky-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -84,7 +82,6 @@ export default function SearchPanel({
           </button>
         </div>
 
-        {/* Category Pills */}
         <div className="flex items-center space-x-2 px-4 py-2.5 overflow-x-auto border-b border-slate-800/60 bg-slate-950/40 no-scrollbar">
           {categories.map((cat) => (
             <button
@@ -101,7 +98,6 @@ export default function SearchPanel({
           ))}
         </div>
 
-        {/* Results List */}
         <div className="overflow-y-auto p-4 space-y-3 flex-1">
           {filteredPOIs.length === 0 ? (
             <div className="text-center py-12 text-slate-400">
@@ -155,7 +151,6 @@ export default function SearchPanel({
                   </div>
                 </div>
 
-                {/* Action Buttons */}
                 <div className="flex items-center space-x-2 shrink-0 self-end sm:self-center">
                   <button
                     onClick={() => {
@@ -189,7 +184,6 @@ export default function SearchPanel({
           )}
         </div>
 
-        {/* Footer info */}
         <div className="px-4 py-2.5 bg-slate-950/80 border-t border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
           <span>{filteredPOIs.length} spatial points indexed</span>
           <div className="flex items-center space-x-1 text-slate-500">

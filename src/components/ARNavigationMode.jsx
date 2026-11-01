@@ -11,12 +11,11 @@ export default function ARNavigationMode({
   const videoRef = useRef(null);
   const [cameraActive, setCameraActive] = useState(false);
   const [cameraError, setCameraError] = useState(null);
-  const [compassHeading, setCompassHeading] = useState(0); // Degrees 0-360
-  const [pitch, setPitch] = useState(0);                   // Device tilt
+  const [compassHeading, setCompassHeading] = useState(0); 
+  const [pitch, setPitch] = useState(0);                   
   const [simulationHeading, setSimulationHeading] = useState(0);
   const [isSimulated, setIsSimulated] = useState(false);
 
-  // Initialize phone camera
   useEffect(() => {
     let stream = null;
 
@@ -28,7 +27,7 @@ export default function ARNavigationMode({
 
         stream = await navigator.mediaDevices.getUserMedia({
           video: {
-            facingMode: 'environment', // Rear phone camera
+            facingMode: 'environment', 
             width: { ideal: 1280 },
             height: { ideal: 720 }
           },
@@ -49,14 +48,13 @@ export default function ARNavigationMode({
 
     startCamera();
 
-    // Listen to real device orientation / gyroscope if on mobile
     const handleOrientation = (e) => {
       if (e.webkitCompassHeading !== undefined) {
-        // iOS Safari WebKit compass heading
+        
         setCompassHeading(e.webkitCompassHeading);
         setIsSimulated(false);
       } else if (e.alpha !== null) {
-        // Android / standard standard alpha
+        
         setCompassHeading(360 - e.alpha);
         setIsSimulated(false);
       }
@@ -75,7 +73,6 @@ export default function ARNavigationMode({
     };
   }, []);
 
-  // Compute bearing angle from player position to next waypoint
   const currentStep = directions?.[0];
   const targetWaypoint = currentStep?.waypoint || (destination ? { x: destination.position[0], z: destination.position[2] } : null);
 
@@ -83,25 +80,22 @@ export default function ARNavigationMode({
   if (targetWaypoint) {
     const dx = targetWaypoint.x - playerPos[0];
     const dz = targetWaypoint.z - playerPos[2];
-    // In our coordinate system: -Z is North (0 deg), +X is East (90 deg)
+    
     const rad = Math.atan2(dx, -dz);
     bearingDegrees = ((rad * 180) / Math.PI + 360) % 360;
   }
 
-  // Active heading: real compass if available, else simulation heading
   const currentDeviceHeading = isSimulated ? simulationHeading : compassHeading;
 
-  // Relative angle between current phone heading and target bearing
   let relativeAngle = bearingDegrees - currentDeviceHeading;
   while (relativeAngle > 180) relativeAngle -= 360;
   while (relativeAngle < -180) relativeAngle += 360;
 
-  // Screen horizontal offset for floating AR marker (-45 deg to +45 deg FOV)
-  const screenOffsetPct = Math.max(-45, Math.min(45, relativeAngle)) / 45; // -1 to 1
+  const screenOffsetPct = Math.max(-45, Math.min(45, relativeAngle)) / 45; 
 
   return (
     <div className="fixed inset-0 z-50 bg-black flex flex-col select-none overflow-hidden animate-in fade-in duration-300">
-      {/* Live Rear Camera Feed or AR Simulated Digital Twin Canvas */}
+      
       <div className="relative flex-1 w-full h-full overflow-hidden">
         {cameraActive && !cameraError ? (
           <video
@@ -112,7 +106,7 @@ export default function ARNavigationMode({
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-b from-slate-900 via-indigo-950 to-slate-950 flex flex-col items-center justify-center relative">
-            {/* Visual simulation backdrop */}
+            
             <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:16px_16px]" />
             <div className="ar-scanner-line" />
             <div className="text-center p-6 z-10 max-w-md">
@@ -126,7 +120,6 @@ export default function ARNavigationMode({
                 Mobile WebXR camera feed simulator for desktop judging and live demonstration. Real mobile devices automatically stream the rear camera.
               </p>
 
-              {/* Desktop Simulation Heading Slider */}
               <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-left">
                 <div className="flex justify-between text-xs text-slate-400 mb-1">
                   <span>Simulated Phone Heading</span>
@@ -145,9 +138,8 @@ export default function ARNavigationMode({
           </div>
         )}
 
-        {/* Live AR Overlay HUD */}
         <div className="absolute inset-0 pointer-events-none flex flex-col justify-between p-6">
-          {/* Top Bar: Compass & Target Info */}
+          
           <div className="flex items-center justify-between pointer-events-auto">
             <div className="glass-panel px-4 py-2 rounded-2xl flex items-center space-x-3 border border-sky-500/30">
               <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></div>
@@ -171,9 +163,8 @@ export default function ARNavigationMode({
             </button>
           </div>
 
-          {/* Central 3D AR Spatial Waypoint Arrow Indicator */}
           <div className="relative flex-1 flex items-center justify-center">
-            {/* Dynamic floating waypoint badge positioned according to phone azimuth */}
+            
             <div
               className="absolute transition-all duration-150 ease-out flex flex-col items-center"
               style={{
@@ -181,7 +172,7 @@ export default function ARNavigationMode({
                 opacity: Math.abs(relativeAngle) < 60 ? 1 : 0.4
               }}
             >
-              {/* 3D Glowing AR Holographic Chevron */}
+              
               <div
                 className="w-20 h-20 rounded-full bg-gradient-to-tr from-sky-500/30 to-indigo-500/30 backdrop-blur-md border-2 border-sky-400 flex items-center justify-center shadow-[0_0_30px_rgba(56,189,248,0.7)] animate-pulse"
                 style={{
@@ -193,7 +184,6 @@ export default function ARNavigationMode({
                 </svg>
               </div>
 
-              {/* Waypoint distance callout */}
               <div className="mt-3 glass-panel px-3 py-1.5 rounded-xl border border-sky-400/50 shadow-xl text-center">
                 <p className="text-xs font-bold text-white">
                   {destination ? destination.name : 'Target Destination'}
@@ -205,7 +195,6 @@ export default function ARNavigationMode({
             </div>
           </div>
 
-          {/* Bottom Guidance Banner */}
           <div className="pointer-events-auto">
             <div className="glass-panel p-4 rounded-2xl border border-sky-500/30 shadow-2xl flex items-center justify-between">
               <div className="flex items-center space-x-3">

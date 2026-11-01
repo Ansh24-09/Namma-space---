@@ -1,7 +1,4 @@
-/**
- * Namma Space — Comprehensive System Verification Test Suite
- * Validates Spatial Indexing, A* Pathfinding, Collision Clearance, and Turn Directions.
- */
+
 
 import { FLOOR_CONFIG, ROOM_ZONES, WALLS, OBSTACLES, POI_LIST, DEFAULT_SPAWN } from '../src/utils/floorData.js';
 import {
@@ -32,7 +29,6 @@ console.log("\n=======================================================");
 console.log("  NAMMA SPACE — AUTOMATED SYSTEM VERIFICATION SUITE   ");
 console.log("=======================================================\n");
 
-// 1. Spatial Registry & POI Integrity
 console.log("[Test Suite 1: Architectural Data & POI Registry]");
 assert(FLOOR_CONFIG.width === 60 && FLOOR_CONFIG.depth === 40, "Floor dimensions configured as 60m x 40m");
 assert(ROOM_ZONES.length >= 8, `Defined ${ROOM_ZONES.length} functional architectural zones`);
@@ -46,21 +42,17 @@ POI_LIST.forEach(poi => {
   assert(poi.amenities && poi.amenities.length > 0, `POI [${poi.id}] lists amenities`);
 });
 
-// 2. Spawn & Collision Grid Checks
 console.log("\n[Test Suite 2: Collision Engine & Grid Validation]");
 assert(isWorldPositionWalkable(DEFAULT_SPAWN.position[0], DEFAULT_SPAWN.position[2]), "Default player spawn in Lobby is walkable");
 
-// Test that solid exterior wall is impassable
 assert(!isWorldPositionWalkable(-30, 0), "West exterior boundary wall is solid and blocked");
 assert(!isWorldPositionWalkable(30, 0), "East exterior boundary wall is solid and blocked");
 assert(!isWorldPositionWalkable(0, -20), "North exterior boundary wall is solid and blocked");
 assert(!isWorldPositionWalkable(0, 20), "South exterior boundary wall is solid and blocked");
 
-// Test interior obstacles (Server rack, reception desk)
 assert(!isWorldPositionWalkable(0, -14.5), "Reception desk is detected as a physical obstacle");
 assert(!isWorldPositionWalkable(-8.5, 1.5), "Server rack cluster is detected as a physical obstacle");
 
-// 3. A* Pathfinding Across All 10 POIs
 console.log("\n[Test Suite 3: Obstacle-Aware A* Routing Across All POIs]");
 const spawnX = DEFAULT_SPAWN.position[0];
 const spawnZ = DEFAULT_SPAWN.position[2];
@@ -75,7 +67,6 @@ POI_LIST.forEach(poi => {
   const dist = calculatePathDistance(path);
   assert(dist > 0 && dist < 100, `Path distance to [${poi.name}] is realistic: ${dist.toFixed(1)}m`);
 
-  // Verify all waypoints in path avoid obstacles
   let pathClear = true;
   for (let i = 0; i < path.length; i++) {
     const pt = path[i];
@@ -93,7 +84,6 @@ POI_LIST.forEach(poi => {
   assert(dirs[dirs.length - 1].instruction.includes(poi.name), `Final step confirms arrival at [${poi.name}]`);
 });
 
-// 4. Spatial Fuzzy Search Simulation
 console.log("\n[Test Suite 4: Spatial Search Engine Simulation]");
 function simulateSearch(query) {
   const q = query.toLowerCase();

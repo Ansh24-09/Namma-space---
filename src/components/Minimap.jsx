@@ -11,10 +11,9 @@ export default function Minimap({
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const width = FLOOR_CONFIG.width;   // 60m (-30 to +30)
-  const depth = FLOOR_CONFIG.depth;   // 40m (-20 to +20)
+  const width = FLOOR_CONFIG.width;   
+  const depth = FLOOR_CONFIG.depth;   
 
-  // Map coordinate conversion to SVG viewport (viewBox: 0 0 600 400)
   const SVG_W = 600;
   const SVG_H = 400;
 
@@ -26,8 +25,6 @@ export default function Minimap({
   const playerSvgX = toSvgX(playerPos[0]);
   const playerSvgY = toSvgY(playerPos[2]);
 
-  // Player FOV Cone angle in 2D SVG
-  // Camera Euler Y rotation in radians: 0 is looking -Z in Three.js (up in SVG)
   const headingDeg = (-playerHeading * 180) / Math.PI + 180;
 
   const handleMapClick = (e) => {
@@ -54,7 +51,7 @@ export default function Minimap({
           : 'w-72 h-52 absolute top-20 right-6 z-20'
       }`}
     >
-      {/* Header bar */}
+      
       <div className="flex items-center justify-between px-3.5 py-2 border-b border-slate-800 bg-slate-900/80">
         <div className="flex items-center space-x-2">
           <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
@@ -81,14 +78,13 @@ export default function Minimap({
         </div>
       </div>
 
-      {/* SVG Map Canvas */}
       <div className="relative w-full h-[calc(100%-36px)] bg-[#070b12] cursor-crosshair">
         <svg
           viewBox={`0 0 ${SVG_W} ${SVG_H}`}
           className="w-full h-full"
           onClick={handleMapClick}
         >
-          {/* Subtle Grid background */}
+          
           <defs>
             <pattern id="miniGrid" width="20" height="20" patternUnits="userSpaceOnUse">
               <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="0.5" />
@@ -105,7 +101,6 @@ export default function Minimap({
 
           <rect width={SVG_W} height={SVG_H} fill="url(#miniGrid)" />
 
-          {/* Room Zones */}
           {ROOM_ZONES.map((zone) => {
             const rx = toSvgX(zone.bounds.minX);
             const ry = toSvgY(zone.bounds.minZ);
@@ -144,7 +139,6 @@ export default function Minimap({
             );
           })}
 
-          {/* Obstacles & Furniture */}
           {OBSTACLES.map((obs, i) => {
             const ox = toSvgX(obs.minX);
             const oy = toSvgY(obs.minZ);
@@ -166,7 +160,6 @@ export default function Minimap({
             );
           })}
 
-          {/* Architectural Walls */}
           {WALLS.map((wall, idx) => {
             const wx = toSvgX(wall.minX);
             const wy = toSvgY(wall.minZ);
@@ -187,10 +180,9 @@ export default function Minimap({
             );
           })}
 
-          {/* Active Navigation Route */}
           {activePath && activePath.length > 1 && (
             <g>
-              {/* Glowing background path */}
+              
               <polyline
                 points={activePath.map((p) => `${toSvgX(p.x)},${toSvgY(p.z)}`).join(' ')}
                 fill="none"
@@ -200,7 +192,7 @@ export default function Minimap({
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
-              {/* Foreground animated dashed line */}
+              
               <polyline
                 points={activePath.map((p) => `${toSvgX(p.x)},${toSvgY(p.z)}`).join(' ')}
                 fill="none"
@@ -210,7 +202,7 @@ export default function Minimap({
                 strokeLinejoin="round"
                 className="animated-path-line"
               />
-              {/* Waypoint dots */}
+              
               {activePath.map((p, idx) => (
                 <circle
                   key={idx}
@@ -225,7 +217,6 @@ export default function Minimap({
             </g>
           )}
 
-          {/* POI Markers */}
           {POI_LIST.map((poi) => {
             const px = toSvgX(poi.position[0]);
             const py = toSvgY(poi.position[2]);
@@ -263,20 +254,19 @@ export default function Minimap({
             );
           })}
 
-          {/* Player Blip & Directional FOV Cone */}
           <g transform={`translate(${playerSvgX}, ${playerSvgY})`}>
-            {/* FOV Cone */}
+            
             <path
               d="M 0 0 L -25 -45 A 50 50 0 0 1 25 -45 Z"
               fill="url(#playerRadar)"
               transform={`rotate(${headingDeg})`}
               className="pointer-events-none"
             />
-            {/* Radar ring */}
+            
             <circle cx="0" cy="0" r="10" fill="#38bdf8" fillOpacity="0.2" className="radar-ping" />
-            {/* Inner player dot */}
+            
             <circle cx="0" cy="0" r="4.5" fill="#38bdf8" stroke="#ffffff" strokeWidth="1.5" />
-            {/* Heading pointer tip */}
+            
             <line
               x1="0"
               y1="0"
@@ -291,7 +281,6 @@ export default function Minimap({
         </svg>
       </div>
 
-      {/* Footer hint */}
       <div className="px-3 py-1 bg-slate-950 text-[10px] text-slate-400 flex items-center justify-between border-t border-slate-800">
         <span>Click anywhere to navigate</span>
         <span className="text-sky-400 font-mono">

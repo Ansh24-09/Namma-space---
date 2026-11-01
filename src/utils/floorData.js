@@ -1,17 +1,12 @@
-/**
- * Namma Space — Architectural Floor Data & Spatial Registry
- * Venue: IIT Bombay Lecture Hall & Innovation Complex (Techfest Arena)
- * Floor 1: 60m x 40m Digital Twin Environment
- */
+
 
 export const FLOOR_CONFIG = {
-  width: 60,   // X-axis: -30 to +30 meters
-  depth: 40,   // Z-axis: -20 to +20 meters
-  height: 4.2, // Ceiling height in meters
-  gridCellSize: 0.5, // 0.5m pathfinding resolution
+  width: 60,   
+  depth: 40,   
+  height: 4.2, 
+  gridCellSize: 0.5, 
 };
 
-// Rooms / Functional Zones
 export const ROOM_ZONES = [
   {
     id: 'lobby',
@@ -79,42 +74,32 @@ export const ROOM_ZONES = [
   }
 ];
 
-// Architectural Walls & Dividers (minX, maxX, minZ, maxZ, height, material)
-// Doorways are represented as gaps in walls
 export const WALLS = [
-  // Exterior perimeter walls (60 x 40m)
-  { minX: -30, maxX: 30, minZ: -20, maxZ: -19.6, h: 4.2, type: 'exterior' }, // North wall
-  { minX: -30, maxX: 30, minZ: 19.6, maxZ: 20, h: 4.2, type: 'exterior' },   // South wall
-  { minX: -30, maxX: -29.6, minZ: -20, maxZ: 20, h: 4.2, type: 'exterior' }, // West wall
-  { minX: 29.6, maxX: 30, minZ: -20, maxZ: 20, h: 4.2, type: 'exterior' },   // East wall
+  
+  { minX: -30, maxX: 30, minZ: -20, maxZ: -19.6, h: 4.2, type: 'exterior' }, 
+  { minX: -30, maxX: 30, minZ: 19.6, maxZ: 20, h: 4.2, type: 'exterior' },   
+  { minX: -30, maxX: -29.6, minZ: -20, maxZ: 20, h: 4.2, type: 'exterior' }, 
+  { minX: 29.6, maxX: 30, minZ: -20, maxZ: 20, h: 4.2, type: 'exterior' },   
 
-  // West wing dividing wall (separates Hall Alpha and Conf Bravo from Central Corridor)
-  // Gap at Z = -4 to -2 for Hall Alpha entrance
   { minX: -13, maxX: -12.6, minZ: -19.6, maxZ: -4, h: 4.2, type: 'interior' },
   { minX: -13, maxX: -12.6, minZ: -2, maxZ: 8, h: 4.2, type: 'interior' },
-  // Gap at Z = 8 to 10 for Boardroom Bravo entrance
+  
   { minX: -13, maxX: -12.6, minZ: 10, maxZ: 19.6, h: 4.2, type: 'interior' },
 
-  // Wall between Hall Alpha and Boardroom Bravo (Z = 2)
   { minX: -29.6, maxX: -13, minZ: 1.8, maxZ: 2.2, h: 4.2, type: 'interior' },
 
-  // East wing dividing wall (separates Innovation Lab & Co-Working from Central Corridor)
-  // Gap at Z = -4 to -2 for Innovation Lab entrance
   { minX: 12.6, maxX: 13, minZ: -19.6, maxZ: -4, h: 4.2, type: 'interior' },
   { minX: 12.6, maxX: 13, minZ: -2, maxZ: 8, h: 4.2, type: 'interior' },
-  // Gap at Z = 8 to 10 for Co-Working entrance
+  
   { minX: 12.6, maxX: 13, minZ: 10, maxZ: 19.6, h: 4.2, type: 'interior' },
 
-  // Wall between Innovation Lab and Co-working Bay (Z = 2)
   { minX: 13, maxX: 29.6, minZ: 1.8, maxZ: 2.2, h: 4.2, type: 'interior' },
 
-  // Server Room Enclosure (West of central hub)
   { minX: -11, maxX: -10.6, minZ: -3, maxZ: 6, h: 4.2, type: 'glass' },
   { minX: -11, maxX: -2, minZ: -3.2, maxZ: -2.8, h: 4.2, type: 'glass' },
-  { minX: -11, maxX: -5, minZ: 5.8, maxZ: 6.2, h: 4.2, type: 'glass' }, // Door gap -5 to -2
+  { minX: -11, maxX: -5, minZ: 5.8, maxZ: 6.2, h: 4.2, type: 'glass' }, 
   { minX: -2.4, maxX: -2, minZ: -3, maxZ: 6, h: 4.2, type: 'glass' },
 
-  // Atrium decorative columns / structural pillars
   { minX: -6.5, maxX: -5.5, minZ: -12.5, maxZ: -11.5, h: 4.2, type: 'pillar' },
   { minX: 5.5, maxX: 6.5, minZ: -12.5, maxZ: -11.5, h: 4.2, type: 'pillar' },
   { minX: -6.5, maxX: -5.5, minZ: -6.5, maxZ: -5.5, h: 4.2, type: 'pillar' },
@@ -123,46 +108,37 @@ export const WALLS = [
   { minX: 5.5, maxX: 6.5, minZ: 7.5, maxZ: 8.5, h: 4.2, type: 'pillar' },
 ];
 
-// Physical Obstacles (Furniture, desks, counters, server racks) that block navigation
 export const OBSTACLES = [
-  // Reception Desk in Lobby
+  
   { name: 'Reception Desk', minX: -4, maxX: 4, minZ: -15.5, maxZ: -13.5, h: 1.2, color: '#334155' },
 
-  // Lecture Hall Alpha Stage and Podiums
   { name: 'Alpha Stage', minX: -28, maxX: -24, minZ: -10, maxZ: -2, h: 0.6, color: '#312e81' },
   { name: 'Auditorium Seating Row 1', minX: -22, maxX: -15, minZ: -9, maxZ: -7.5, h: 0.9, color: '#4338ca' },
   { name: 'Auditorium Seating Row 2', minX: -22, maxX: -15, minZ: -6, maxZ: -4.5, h: 0.9, color: '#4338ca' },
   { name: 'Auditorium Seating Row 3', minX: -22, maxX: -15, minZ: -3, maxZ: -1.5, h: 0.9, color: '#4338ca' },
 
-  // Boardroom Bravo Conference Table
   { name: 'Boardroom Table', minX: -23, maxX: -17, minZ: 8, maxZ: 13, h: 0.85, color: '#78350f' },
 
-  // Innovation Lab Workbenches & 3D Printers
   { name: 'Robotics Bench A', minX: 16, maxX: 25, minZ: -11, maxZ: -8.5, h: 1.0, color: '#047857' },
   { name: 'Robotics Bench B', minX: 16, maxX: 25, minZ: -6.5, maxZ: -4, h: 1.0, color: '#047857' },
   { name: '3D Printer Farm', minX: 25, maxX: 28, minZ: -12, maxZ: -2, h: 1.4, color: '#0f766e' },
 
-  // Co-working Developer Pods
   { name: 'Dev Pod Alpha', minX: 16, maxX: 20, minZ: 6, maxZ: 10, h: 0.9, color: '#b45309' },
   { name: 'Dev Pod Beta', minX: 22, maxX: 26, minZ: 6, maxZ: 10, h: 0.9, color: '#b45309' },
   { name: 'Dev Pod Gamma', minX: 16, maxX: 20, minZ: 12, maxZ: 16, h: 0.9, color: '#b45309' },
   { name: 'Dev Pod Delta', minX: 22, maxX: 26, minZ: 12, maxZ: 16, h: 0.9, color: '#b45309' },
 
-  // Server Racks in Data Center
   { name: 'Server Rack A', minX: -9.5, maxX: -8, minZ: -1, maxZ: 4, h: 2.2, color: '#1e1b4b' },
   { name: 'Server Rack B', minX: -5.5, maxX: -4, minZ: -1, maxZ: 4, h: 2.2, color: '#1e1b4b' },
 
-  // Exhibition Centerpiece
   { name: 'Techfest Hologram Plinth', minX: 4.5, maxX: 8.5, minZ: -0.5, maxZ: 3.5, h: 1.1, color: '#ca8a04' },
 
-  // Cafeteria Bar Counter & Tables
   { name: 'Café Bar Counter', minX: -9, maxX: 9, minZ: 16, maxZ: 17.5, h: 1.15, color: '#831843' },
   { name: 'Café Table 1', minX: -8, maxX: -5.5, minZ: 11, maxZ: 13.5, h: 0.8, color: '#9d174d' },
   { name: 'Café Table 2', minX: -2, maxX: 1.5, minZ: 11, maxZ: 13.5, h: 0.8, color: '#9d174d' },
   { name: 'Café Table 3', minX: 4.5, maxX: 7.5, minZ: 11, maxZ: 13.5, h: 0.8, color: '#9d174d' }
 ];
 
-// Points of Interest (POIs) with rich metadata, descriptions, category, thumbnail, and 3D coords
 export const POI_LIST = [
   {
     id: 'poi-reception',
@@ -170,7 +146,7 @@ export const POI_LIST = [
     category: 'Information & Check-in',
     categoryColor: '#0ea5e9',
     position: [0, 1.8, -13],
-    walkableTarget: [0, 0, -11.5], // Coordinates player can stand on
+    walkableTarget: [0, 0, -11.5], 
     tags: ['reception', 'helpdesk', 'registration', 'lobby', 'checkin', 'information', 'entry'],
     description: 'Central check-in hub for Techfest attendees and delegates. Collect NFC smart badges, event itineraries, and delegate kits.',
     amenities: ['Visitor Registration', 'Info Kiosk', 'Lost & Found', 'Live LED Schedule'],
@@ -306,9 +282,8 @@ export const POI_LIST = [
   }
 ];
 
-// Initial default player spawn point (Standing in the Grand Lobby)
 export const DEFAULT_SPAWN = {
-  position: [0, 1.6, -11], // 1.6m eye level
-  rotation: [0, Math.PI, 0] // Looking south into the facility
+  position: [0, 1.6, -11], 
+  rotation: [0, Math.PI, 0] 
 };
 

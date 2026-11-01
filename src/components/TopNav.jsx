@@ -11,7 +11,7 @@ export default function TopNav({
 }) {
   return (
     <header className="absolute top-0 left-0 right-0 z-30 px-6 py-4 flex items-center justify-between pointer-events-none">
-      {/* Brand & Venue Badge */}
+      
       <div className="flex items-center space-x-3 pointer-events-auto">
         <div className="flex items-center space-x-2 glass-panel px-3.5 py-2 rounded-2xl border border-sky-500/30 shadow-xl">
           <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center shadow-md shadow-sky-500/30 shrink-0">
@@ -31,7 +31,6 @@ export default function TopNav({
         </div>
       </div>
 
-      {/* Central Search Bar Quick Trigger */}
       <div className="hidden md:flex items-center pointer-events-auto">
         <button
           onClick={onOpenSearch}
@@ -47,9 +46,8 @@ export default function TopNav({
         </button>
       </div>
 
-      {/* Right Controls: Mode Toggle, AR Button, Docs */}
       <div className="flex items-center space-x-2 pointer-events-auto">
-        {/* AR Navigation Mode Button (Juspay Bonus) */}
+        
         <button
           onClick={() => setActiveMode(activeMode === 'ar' ? 'walkthrough' : 'ar')}
           className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-lg ${
@@ -67,7 +65,6 @@ export default function TopNav({
           <span className="text-[10px] px-1 py-0.5 rounded bg-sky-500/30 text-sky-300 font-mono">Bonus</span>
         </button>
 
-        {/* Search button for mobile */}
         <button
           onClick={onOpenSearch}
           className="md:hidden p-2 rounded-xl glass-panel text-slate-300 hover:text-white border border-slate-700"
@@ -78,7 +75,6 @@ export default function TopNav({
           </svg>
         </button>
 
-        {/* Reset spawn position */}
         <button
           onClick={onResetPosition}
           className="p-2 rounded-xl glass-panel text-slate-300 hover:text-white border border-slate-700 hover:border-slate-500 transition shadow"
@@ -89,7 +85,6 @@ export default function TopNav({
           </svg>
         </button>
 
-        {/* Techfest Abstract & Pipeline Docs */}
         <button
           onClick={onOpenDocs}
           className="px-3 py-2 rounded-xl glass-panel hover:bg-slate-800 text-slate-200 text-xs font-semibold border border-slate-700 hover:border-sky-500/50 transition flex items-center space-x-1.5 shadow"

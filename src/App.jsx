@@ -16,7 +16,7 @@ import {
 } from './utils/pathfinding';
 
 export default function App() {
-  // Navigation & Spatial States
+  
   const [playerPos, setPlayerPos] = useState(DEFAULT_SPAWN.position);
   const [playerHeading, setPlayerHeading] = useState(DEFAULT_SPAWN.rotation[1]);
   const [selectedPOI, setSelectedPOI] = useState(null);
@@ -26,21 +26,18 @@ export default function App() {
   const [totalDistance, setTotalDistance] = useState(0);
   const [isNavigating, setIsNavigating] = useState(false);
 
-  // App UI Modes & Dialogs
-  const [activeMode, setActiveMode] = useState('walkthrough'); // 'walkthrough' | 'ar'
+  const [activeMode, setActiveMode] = useState('walkthrough'); 
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isDocsOpen, setIsDocsOpen] = useState(false);
   const [inspectingPOI, setInspectingPOI] = useState(null);
   const [freeLookLocked, setFreeLookLocked] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
 
-  // Show temporary toast notification
   const showToast = useCallback((msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3500);
   }, []);
 
-  // Compute navigation path to target coordinates
   const startNavigation = useCallback((targetX, targetZ, destObj = null) => {
     const path = findPath(playerPos[0], playerPos[2], targetX, targetZ);
     if (!path || path.length < 2) {
@@ -64,19 +61,16 @@ export default function App() {
     showToast(`📍 Routing to ${destName} (${dist.toFixed(1)}m)`);
   }, [playerPos, showToast]);
 
-  // Navigate to designated POI
   const handleNavigateToPOI = useCallback((poi) => {
     const target = poi.walkableTarget || [poi.position[0], 0, poi.position[2]];
     startNavigation(target[0], target[2], poi);
   }, [startNavigation]);
 
-  // Teleport player directly to POI
   const handleTeleportToPOI = useCallback((poi) => {
     setSelectedPOI(poi);
     showToast(`⚡ Teleported to ${poi.name}`);
   }, [showToast]);
 
-  // Cancel active navigation
   const handleCancelNavigation = useCallback(() => {
     setActiveDestination(null);
     setActivePath(null);
@@ -86,7 +80,6 @@ export default function App() {
     showToast('Navigation ended');
   }, [showToast]);
 
-  // Reset player to lobby spawn
   const handleResetPosition = useCallback(() => {
     setSelectedPOI({
       name: 'Grand Reception Lobby',
@@ -96,7 +89,6 @@ export default function App() {
     showToast('Returned to Reception Lobby');
   }, [handleCancelNavigation, showToast]);
 
-  // Continuously recalculate remaining distance & check arrival as player walks
   useEffect(() => {
     if (!isNavigating || !activeDestination) return;
 
@@ -110,16 +102,14 @@ export default function App() {
       targetPos[2] - playerPos[2]
     );
 
-    // Arrival detection (within 1.8m)
     if (distToTarget < 1.8) {
       showToast(`🎉 You have arrived at ${activeDestination.name}!`);
       handleCancelNavigation();
       return;
     }
 
-    // Update remaining path length if moving along route
     if (activePath && activePath.length > 1) {
-      // Find nearest waypoint in front of player
+      
       const remainingDist = distToTarget;
       setTotalDistance(remainingDist);
     }
@@ -127,7 +117,7 @@ export default function App() {
 
   return (
     <div className="relative w-full h-full overflow-hidden bg-slate-950 select-none">
-      {/* Top Header & Navigation Controls */}
+      
       <TopNav
         activeMode={activeMode}
         setActiveMode={setActiveMode}
@@ -138,7 +128,6 @@ export default function App() {
         destination={activeDestination}
       />
 
-      {/* Main 3D Web Walkthrough Viewer */}
       <WalkthroughViewer
         selectedPOI={selectedPOI}
         onSelectPOI={(poi) => setInspectingPOI(poi)}
@@ -153,7 +142,6 @@ export default function App() {
         onOpenSearch={() => setIsSearchOpen(true)}
       />
 
-      {/* 2D Interactive Minimap & Floor Plan (Top-Right) */}
       <Minimap
         playerPos={playerPos}
         playerHeading={playerHeading}
@@ -163,7 +151,6 @@ export default function App() {
         onNavigateToCoords={(x, z) => startNavigation(x, z)}
       />
 
-      {/* Turn-by-Turn Desktop Navigation HUD (Top-Left) */}
       {isNavigating && activeDestination && (
         <NavigationHUD
           destination={activeDestination}
@@ -174,7 +161,6 @@ export default function App() {
         />
       )}
 
-      {/* Spatial POI Search Panel (Modal) */}
       <SearchPanel
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
@@ -184,7 +170,6 @@ export default function App() {
         onTeleportToPOI={handleTeleportToPOI}
       />
 
-      {/* POI Detailed Inspection Card (Modal) */}
       <POIDetailsModal
         poi={inspectingPOI}
         onClose={() => setInspectingPOI(null)}
@@ -192,7 +177,6 @@ export default function App() {
         onTeleport={handleTeleportToPOI}
       />
 
-      {/* AR Live Camera Navigation Mode (Bonus Deliverable) */}
       {activeMode === 'ar' && (
         <ARNavigationMode
           destination={activeDestination || POI_LIST[0]}
@@ -211,13 +195,11 @@ export default function App() {
         />
       )}
 
-      {/* Technical Abstract & Documentation Modal */}
       <DocsModal
         isOpen={isDocsOpen}
         onClose={() => setIsDocsOpen(false)}
       />
 
-      {/* Global Toast Notification */}
       {toastMessage && (
         <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none animate-in fade-in slide-in-from-bottom-2 duration-200">
           <div className="glass-panel px-4 py-2.5 rounded-2xl text-xs font-semibold text-white shadow-2xl border border-sky-400/40 flex items-center space-x-2">

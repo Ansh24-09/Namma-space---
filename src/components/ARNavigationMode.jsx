@@ -165,7 +165,7 @@ export default function ARNavigationMode({
               onClick={onClose}
               className="p-3 rounded-full bg-slate-900/80 hover:bg-slate-800 text-white backdrop-blur-md border border-white/20 transition shadow-lg pointer-events-auto"
             >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg width="20" height="20" style={{ width: 20, height: 20 }} className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -188,7 +188,7 @@ export default function ARNavigationMode({
                   transform: `rotate(${relativeAngle}deg)`
                 }}
               >
-                <svg className="w-10 h-10 text-white drop-shadow-[0_0_10px_#38bdf8]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg width="40" height="40" style={{ width: 40, height: 40 }} className="w-10 h-10 text-white drop-shadow-[0_0_10px_#38bdf8]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 10l7-7m0 0l7 7m-7-7v18" />
                 </svg>
               </div>

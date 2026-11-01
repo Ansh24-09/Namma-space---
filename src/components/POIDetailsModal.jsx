@@ -126,3 +126,4 @@ export default function POIDetailsModal({
     </div>
   );
 }
+

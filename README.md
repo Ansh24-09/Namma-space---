@@ -170,3 +170,4 @@ namma iit/
 ## 📄 License & Credits
 Developed for **Techfest 2026-27**, IIT Bombay. Sponsored by **Juspay**.  
 Open-source under the MIT License.
+

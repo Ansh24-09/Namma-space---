@@ -170,3 +170,4 @@ export default function DocsModal({ isOpen, onClose }) {
     </div>
   );
 }
+

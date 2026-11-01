@@ -155,3 +155,4 @@ For on-site navigation at the IIT Bombay campus, visitors can switch to **AR Nav
 ## 10. Conclusion
 
 Namma Space provides a complete, scalable, and fully realized software solution addressing all requirements of Techfest 2026-27. From smartphone data collection SOP to zero-install WebGL walkthroughs, spatial indexing, obstacle-aware A\* routing, and on-site AR guidance, the system delivers an end-to-end digital twin pipeline ready for immediate deployment and on-campus finale demonstration.
+

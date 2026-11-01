@@ -116,3 +116,4 @@ Before uploading the capture video to the automated reconstruction pipeline:
 - [x] **Complete Coverage:** All doorways, corridors, and furniture clusters captured with at least 75% overlap.
 - [x] **Loop Closed:** Video begins and ends at the identical physical location.
 - [x] **Format:** Saved as `.mp4` or `.mov` in 4K or 1080p resolution.
+

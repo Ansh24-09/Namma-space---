@@ -50,3 +50,4 @@
   - 10-Minute live pitch and platform demo in front of expert judging panel.
   - 5-Minute technical Q&A on capture efficiency, A* accuracy, and pipeline scalability.
   - Live on-site smartphone AR camera demonstration.
+

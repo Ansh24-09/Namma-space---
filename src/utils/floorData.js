@@ -184,7 +184,7 @@ export const POI_LIST = [
     category: 'Keynotes & Talks',
     categoryColor: '#8b5cf6',
     position: [-20, 2.2, -6],
-    walkableTarget: [-18, 0, -6],
+    walkableTarget: [-20, 0, -10],
     tags: ['hall alpha', 'lecture hall', 'keynote', 'auditorium', 'stage', 'talks', 'symposium'],
     description: 'Tiered 250-seat high-tech auditorium hosting flagship Techfest keynote addresses, research paper presentations, and international robotics summits.',
     amenities: ['Dual 4K Laser Projection', 'Dolby Atmos Spatial Audio', 'Live Broadcast Uplink', 'Simultaneous Translation'],
@@ -198,7 +198,7 @@ export const POI_LIST = [
     category: 'Meeting & Conferences',
     categoryColor: '#06b6d4',
     position: [-20, 1.8, 10.5],
-    walkableTarget: [-18, 0, 10.5],
+    walkableTarget: [-15.5, 0, 10.5],
     tags: ['boardroom', 'meeting room', 'bravo', 'conference', 'vip', 'investor', 'pitch room'],
     description: 'State-of-the-art boardroom for judge deliberations, startup pitch sessions, and VIP panel discussions featuring smart glass and 4K telepresence.',
     amenities: ['Smart Interactive Whiteboard', 'Polycom 360 Video Conference', 'Private Acoustic Baffles', 'Nespresso Station'],
@@ -212,7 +212,7 @@ export const POI_LIST = [
     category: 'R&D / Hardware',
     categoryColor: '#10b981',
     position: [20, 2.0, -6],
-    walkableTarget: [18, 0, -6],
+    walkableTarget: [14.5, 0, -6],
     tags: ['robotics', 'ai lab', 'hardware', '3d printing', 'drone', 'prototyping', 'iot', 'makerspace'],
     description: 'Advanced makerspace equipped with industrial SLA/FDM 3D printers, ROS robotics test arena, oscilloscope stations, and embedded compute rigs.',
     amenities: ['Stereolithography 3D Printers', 'Soldering & SMD Station', 'NVIDIA Jetson Clusters', 'Autonomous Rover Arena'],
@@ -254,7 +254,7 @@ export const POI_LIST = [
     category: 'Dining & Refreshments',
     categoryColor: '#ec4899',
     position: [0, 1.8, 14],
-    walkableTarget: [0, 0, 11.5],
+    walkableTarget: [0, 0, 14.8],
     tags: ['cafe', 'coffee', 'food', 'cafeteria', 'drinks', 'chai', 'snacks', 'lunch', 'lounge', 'dining'],
     description: 'Relaxation lounge serving fresh filter coffee, gourmet sandwiches, traditional South Indian snacks, and energizing beverages for participants.',
     amenities: ['Espresso Coffee Machine', 'Chai Point Bar', 'Snack Vending', 'Lounge Seating'],
@@ -268,7 +268,7 @@ export const POI_LIST = [
     category: 'Infrastructure',
     categoryColor: '#6366f1',
     position: [-6.5, 2.0, 1.5],
-    walkableTarget: [-6.5, 0, 7.5],
+    walkableTarget: [-3.0, 0, 5.0],
     tags: ['server', 'datacenter', 'it', 'network', 'router', 'cloud', 'security'],
     description: 'Mission-critical server room housing local edge compute nodes, 10Gbps backbone fiber switches, and campus network relays powering the event.',
     amenities: ['Biometric Smart Lock', 'Precision CRAC Cooling', 'N+1 Redundant UPS', 'Direct Fiber Backbone'],
@@ -311,3 +311,4 @@ export const DEFAULT_SPAWN = {
   position: [0, 1.6, -11], // 1.6m eye level
   rotation: [0, Math.PI, 0] // Looking south into the facility
 };
+

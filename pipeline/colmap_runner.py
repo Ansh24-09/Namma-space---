@@ -70,3 +70,4 @@ if __name__ == "__main__":
     parser.add_argument("--matcher", default="sequential", choices=["sequential", "exhaustive"])
     args = parser.parse_args()
     run_colmap_pipeline(args.images, args.workspace, matching_type=args.matcher)
+

@@ -51,10 +51,18 @@ export default function WalkthroughViewer({
     scene.fog = new THREE.FogExp2('#090d16', 0.015);
     sceneRef.current = scene;
 
-    // 2. Camera
+    // 2. Dimensions & Camera
+    const getViewportSize = () => {
+      const w = mountRef.current?.clientWidth || window.innerWidth || 1280;
+      const h = mountRef.current?.clientHeight || window.innerHeight || 800;
+      return { width: Math.max(100, w), height: Math.max(100, h) };
+    };
+
+    const { width, height } = getViewportSize();
+
     const camera = new THREE.PerspectiveCamera(
       75,
-      mountRef.current.clientWidth / mountRef.current.clientHeight,
+      width / height,
       0.1,
       100
     );
@@ -64,7 +72,7 @@ export default function WalkthroughViewer({
 
     // 3. Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
-    renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
+    renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -188,10 +196,13 @@ export default function WalkthroughViewer({
 
     // 8. Window Resize Handler
     const handleResize = () => {
-      if (!mountRef.current || !renderer || !camera) return;
-      camera.aspect = mountRef.current.clientWidth / mountRef.current.clientHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
+      if (!mountRef.current || !rendererRef.current || !cameraRef.current) return;
+      const { width: w, height: h } = getViewportSize();
+      if (w > 0 && h > 0) {
+        cameraRef.current.aspect = w / h;
+        cameraRef.current.updateProjectionMatrix();
+        rendererRef.current.setSize(w, h);
+      }
     };
     window.addEventListener('resize', handleResize);
 
@@ -808,3 +819,4 @@ function roundRect(ctx, x, y, width, height, radius) {
   ctx.quadraticCurveTo(x, y, x + radius, y);
   ctx.closePath();
 }
+

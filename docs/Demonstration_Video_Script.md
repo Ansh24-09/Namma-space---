@@ -78,3 +78,4 @@
 * **Voiceover:**  
   *"For on-site campus visitors at IIT Bombay, Namma Space provides live Augmented Reality guidance through the smartphone camera. By reading the device compass and spatial vector bearings, floating 3D arrows point visitors directly to their destination in real time.*  
   *From phone video to interactive 3D digital twin, Namma Space is ready to replace static blueprints forever. Thank you!"*
+
